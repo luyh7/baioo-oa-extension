@@ -1,5 +1,15 @@
 
 let _respData = null;
+// (function(open){   
+//     XMLHttpRequest.prototype.open =function(method, url, async, user, pass) {
+//         this.addEventListener("readystatechange", function () {
+//             if (this.readyState == 4) {
+//                 console.log(this.status);
+//             }
+//
+//         }, false)
+//     };
+// }
 startup();
 function startup() {
     let today = new Date();
@@ -30,6 +40,10 @@ function showDayTime(){
     let docs = document.getElementsByClassName("cal-now-month-date");
     for(let i = 0; i < _respData.result.value.length; ++i)
     {
+        if(docs[i] == null)
+        {
+            return;
+        }
         let span = docs[i].getElementsByClassName("sign sign-red4 sign-hover")[0];
         if(span == null)
         {
@@ -60,7 +74,11 @@ function showWeekTime() {
         weekTime += data[i].workHours;
         if(_respData.result.value[i].dayOfWeek == 7)
         {
-            docs[i].getElementsByClassName("time")[0].innerHTML += ('<br>'+setColor(weekTime, "#0000ff"));
+            if(docs[i] == null)
+            {
+                return;
+            }
+            docs[i].getElementsByClassName("time")[0].innerHTML += ('<br>'+setColor(weekTime.toFixed(2), "#0000ff"));
             weekTime = 0;
         }
     }
