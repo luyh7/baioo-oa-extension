@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+  <head>
+    <title>hello world</title>
+  </head>
+  <body>
+	<p><button onclick="dealClick()">WARNING</button></p>
+    <script>
+        function dealClick(){
+            //这里值得注意，大部分功能性操作，比如执行脚本，执行函数，都是不可以直接执行，而需要通过chrome.*这样方式进行
+            chrome.tabs.executeScript(
+                null,
+                {
+                    code: `helloWorld()` // 这里调用的是上面的custom.js重定义好的function
+                }
+            );
+        }
+    </script>
+  </body>
+</html>
