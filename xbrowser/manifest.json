@@ -9,7 +9,7 @@
     "128" : "icon.jpg"
   },
   "browser_action": {   // browser_action表示程序图标会出现在地址栏右侧，若要出现在地址栏，则写成page_action
-    "default_title": "日报工具",
+    "default_title": "科学摸鱼",
     "default_icon": "icon.jpg",
     "default_popup": "popup.html"
   },
