@@ -10,6 +10,7 @@ function startup() {
 function helloWorld(){
     showDataOnConsole(_respData);
     showTitle();
+    showWeekTime();
     showDayTime();
 }
 
@@ -29,19 +30,38 @@ function showDayTime(){
     let docs = document.getElementsByClassName("cal-now-month-date");
     for(let i = 0; i < _respData.result.value.length; ++i)
     {
-        let span = docs[i].getElementsByClassName("time")[0];
+        let span = docs[i].getElementsByClassName("sign sign-red4 sign-hover")[0];
+        if(span == null)
+        {
+            continue;
+        }
         let workTime = _respData.result.value[i].workHours;
         if(workTime >= 8)
         {
-            span.innerHTML += setColor('<br>(' + workTime +')', "#3aae0c")
+            span.innerHTML = setColor('' + workTime +'', "#3aae0c")
         }
         else if(workTime <= 0)
         {
-            span.innerHTML += '<br>(' + workTime +')';
+            span.innerHTML = '' + workTime +'';
         }
         else
         {
-            span.innerHTML += setColor('<br>(' + workTime +')', "#ff0000")
+            span.innerHTML = setColor('' + workTime +'', "#ff0000")
+        }
+    }
+}
+
+function showWeekTime() {
+    let docs = document.getElementsByClassName("cal-now-month-date");
+    let weekTime = 0;
+    let data = _respData.result.value;
+    for(let i = 0; i < data.length; ++i)
+    {
+        weekTime += data[i].workHours;
+        if(_respData.result.value[i].dayOfWeek == 7)
+        {
+            docs[i].getElementsByClassName("time")[0].innerHTML += ('<br>'+setColor(weekTime, "#0000ff"));
+            weekTime = 0;
         }
     }
 }
