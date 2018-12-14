@@ -9,6 +9,10 @@ function startup() {
     console.log("today:"+(today.getMonth()+1)+"-"+today.getDate());
     getMonthDataAndDo(today.getFullYear(), today.getMonth() + 1, helloWorld, 0);
 }
+
+/**
+ * 监听翻页按钮
+ */
 function initButton()
 {
     $(document).ready(function(){
@@ -20,6 +24,12 @@ function initButton()
         })
     });
 }
+
+/**
+ * 翻页时更新
+ * @param event 翻页按钮点击事件
+ * @param offset 1:往后翻 -1:往前翻
+ */
 function refreshData(event, offset){
     let curTarget = event.currentTarget
     if(curTarget.classList.contains("cal-disable"))
@@ -41,6 +51,9 @@ function refreshData(event, offset){
     getMonthDataAndDo(_today.getFullYear(), _today.getMonth() + 1, helloWorld, 100);
 }
 
+/**
+ * 更新页面
+ */
 function helloWorld(){
     showDataOnConsole(_respData);
     showTitle();
@@ -137,9 +150,6 @@ function showWeekTime() {
 function showDataOnConsole(response) {
     console.log(response);
 }
-function setColor(str, color) {
-    return "<span style='color:"+color+"'>"+str+"</span>";
-}
 
 /**
  * 向服务器请求某年某月的数据并回调
@@ -184,15 +194,6 @@ function calcWeekTime(){
     return workTime;
 }
 
-function isToday(time)
-{
-    let today = new Date();
-    return parseInt(time.split('-')[0]) == today.getFullYear() &&
-        (parseInt(time.split('-')[1]) == today.getMonth() + 1)&&
-        parseInt(time.split('-')[2]) == today.getDate();
-
-}
-
 function calcMonthTime(){
     let workTime = 0;
     let datas = _respData.result.value;
@@ -202,4 +203,18 @@ function calcMonthTime(){
         workTime += data.workHours;
     }
     return workTime;
+}
+
+
+function isToday(time)
+{
+    let today = new Date();
+    return parseInt(time.split('-')[0]) == today.getFullYear() &&
+        (parseInt(time.split('-')[1]) == today.getMonth() + 1)&&
+        parseInt(time.split('-')[2]) == today.getDate();
+
+}
+
+function setColor(str, color) {
+    return "<span style='color:"+color+"'>"+str+"</span>";
 }
