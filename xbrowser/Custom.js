@@ -1,20 +1,44 @@
 
 let _respData = null;
-// (function(open){   
-//     XMLHttpRequest.prototype.open =function(method, url, async, user, pass) {
-//         this.addEventListener("readystatechange", function () {
-//             if (this.readyState == 4) {
-//                 console.log(this.status);
-//             }
-//
-//         }, false)
-//     };
-// }
+let _today = new Date();
+
 startup();
+initButton();
 function startup() {
     let today = new Date();
     console.log("today:"+(today.getMonth()+1)+"-"+today.getDate());
-    getMonthDataAndDo(today.getFullYear(), today.getMonth() + 1, helloWorld);
+    getMonthDataAndDo(today.getFullYear(), today.getMonth() + 1, helloWorld, 0);
+}
+function initButton()
+{
+    $(document).ready(function(){
+        $(".cal-pre-btn").click(function(){
+            refreshData(event, -1);
+        })
+        $(".cal-next-btn").click(function(event){
+            refreshData(event, 1);
+        })
+    });
+}
+function refreshData(event, offset){
+    let curTarget = event.currentTarget
+    if(curTarget.classList.contains("cal-disable"))
+    {
+        return;
+    }
+    console.log("click-" + (offset>0 ?"next":"pre"));
+    let month = _today.getMonth()+offset;
+    let year = _today.getFullYear();
+    if(month < 0) {
+        month += 12;
+        year -= 1;
+    }
+    else if(month >= 12) {
+        month -= 12;
+        year += 1;
+    }
+    _today.setFullYear(year, month);
+    getMonthDataAndDo(_today.getFullYear(), _today.getMonth() + 1, helloWorld, 100);
 }
 
 function helloWorld(){
@@ -31,25 +55,40 @@ function showTitle() {
     console.log("本月工作时长：" + monthTime);
     let title = document.getElementById("breadcrumb").getElementsByClassName("title")[0];
     let str = "<span style='font-weight:bold'>我的考勤</span>"
+    let today = new Date();
     str += (" 本月工作时长：" + setColor(monthTime.toFixed(2),"#0000ff"));
-    str += (" 本周工作时长：" + setColor(weekTime.toFixed(2), "#0000ff"));
+    if(today.getFullYear() == _today.getFullYear() && today.getMonth() == _today.getMonth()){
+        str += (" 本周工作时长：" + setColor(weekTime.toFixed(2), "#0000ff"));
+    }
     title.innerHTML = str;
 }
 
 function showDayTime(){
     let docs = document.getElementsByClassName("cal-now-month-date");
-    for(let i = 0; i < _respData.result.value.length; ++i)
+    let data = _respData.result.value;
+    let offset = 0;
+    for(let i = 0; i < data.length; ++i)
     {
-        if(docs[i] == null)
+        if(docs[i + offset] == null)
         {
             return;
         }
-        let span = docs[i].getElementsByClassName("sign sign-red4 sign-hover")[0];
+        let dateDt = parseInt(data[i].date.split('-')[2]);
+        let dateDoc = parseInt(docs[i + offset].getAttribute("data-date").split('-')[2]);
+        if(dateDt != dateDoc)
+        {
+            offset += dateDt - dateDoc;
+        }
+        if(docs[i + offset] == null)
+        {
+            return;
+        }
+        let span = docs[i + offset].getElementsByClassName("sign sign-red4 sign-hover")[0];
         if(span == null)
         {
             continue;
         }
-        let workTime = _respData.result.value[i].workHours;
+        let workTime = data[i].workHours;
         if(workTime >= 8)
         {
             span.innerHTML = setColor('' + workTime +'', "#3aae0c")
@@ -69,16 +108,27 @@ function showWeekTime() {
     let docs = document.getElementsByClassName("cal-now-month-date");
     let weekTime = 0;
     let data = _respData.result.value;
+    let offset = 0;
     for(let i = 0; i < data.length; ++i)
     {
-        weekTime += data[i].workHours;
-        if(_respData.result.value[i].dayOfWeek == 7)
+        if(docs[i + offset] == null)
         {
-            if(docs[i] == null)
-            {
-                return;
-            }
-            docs[i].getElementsByClassName("time")[0].innerHTML += ('<br>'+setColor(weekTime.toFixed(2), "#0000ff"));
+            return;
+        }
+        weekTime += data[i].workHours;
+        let dateDt = parseInt(data[i].date.split('-')[2]);
+        let dateDoc = parseInt(docs[i + offset].getAttribute("data-date").split('-')[2]);
+        if(dateDt != dateDoc)
+        {
+            offset += dateDt - dateDoc;
+        }
+        if(docs[i + offset] == null)
+        {
+            return;
+        }
+        if(docs[i + offset].getAttribute("data-week") == '6')
+        {
+            docs[i + offset].getElementsByClassName("time")[0].innerHTML += ('<br>'+setColor(weekTime.toFixed(2), "#0000ff"));
             weekTime = 0;
         }
     }
@@ -91,13 +141,19 @@ function setColor(str, color) {
     return "<span style='color:"+color+"'>"+str+"</span>";
 }
 
-function getMonthDataAndDo(year, month, callback) {
+/**
+ * 向服务器请求某年某月的数据并回调
+ * @param callback 回调函数
+ * @param delay 获得数据后的延迟
+ * 如果不设置延迟，翻页后callback会先于页面原本的翻页操作，结果会被覆盖原本的操作覆盖
+ */
+function getMonthDataAndDo(year, month, callback, delay) {
     $.ajax({
         method:'GET',
         url: 'http://oa.info/attend/statRecord/getMyMonthRecords.json?year='+year+'&month='+month,
         success: function (response) {
             _respData = response;
-            callback();
+            setTimeout(callback, delay);
         }
     });
 }
