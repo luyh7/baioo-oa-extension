@@ -1,21 +1,21 @@
 {
-  "name": "扩展名称",
+  "name": "科学摸鱼",
   "version": "1.0.0",
   "manifest_version": 2,
-  "description": "扩展描述",
-  "icons" : {           // 扩展的icon
+  "description": "科学摸鱼",
+  "icons" : {
     "16" : "icon.jpg",
     "48" : "icon.jpg",
     "128" : "icon.jpg"
   },
-  "browser_action": {   // browser_action表示程序图标会出现在地址栏右侧，若要出现在地址栏，则写成page_action
+  "browser_action": {
     "default_title": "科学摸鱼",
     "default_icon": "icon.jpg",
     "default_popup": "popup.html"
   },
-  "content_scripts": [  //content_scripts是在Web页面内运行的javascript脚本。
-                        //通过使用标准的DOM，它们可以获取浏览器所访问页面的详细信息，并可以修改这些信息。
-    {                   //这里的值是数组，可以针对多个站点进行不同的操作配置
+  "content_scripts": [
+
+    {
       "matches": [
         "http://oa.info/attend/statRecord/*"
       ],
@@ -30,8 +30,8 @@
       "run_at": "document_idle"
     }
   ],
-  "permissions": [   //一些权限的配置，
-    "cookies",       //比如cookie权限，比如系统通知权限，类似于notify这样的东西，在window系统上未右下角的小气泡
+  "permissions": [
+    "cookies",
     "notifications"
   ]
 }
