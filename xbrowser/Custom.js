@@ -55,10 +55,35 @@ function refreshData(event, offset){
  * 更新页面
  */
 function helloWorld(){
+    preprocess();
     showDataOnConsole(_respData);
     showTitle();
     showWeekTime();
     showDayTime();
+}
+
+function preprocess(){
+    console.log("beforeSort:");
+    console.log(_respData);
+    //数据可能因为后端原因是乱序的，需要排序
+    let datas = _respData.result.value;
+    for(let i = datas.length; i > 0; --i){
+        for(let j = i-1; j > 0; --j){
+            if(compareDate(datas[j-1].date, datas[j].date) > 0){
+                let tmp = datas[j-1];
+                datas[j-1] = datas[j];
+                datas[j] = tmp;
+            }
+        }
+    }
+    _respData.result.value = datas;
+    function compareDate(a, b) {
+        let date1 = new Date(a);
+        let date2 = new Date(b)
+        if(date1 > date2) return 1;
+        if(date1 < date2) return -1;
+        return 0;
+    }
 }
 
 function showTitle() {
@@ -148,6 +173,7 @@ function showWeekTime() {
 }
 
 function showDataOnConsole(response) {
+    console.log("afterSort:");
     console.log(response);
 }
 
