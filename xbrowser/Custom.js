@@ -131,6 +131,11 @@ function showWeekTime() {
         weekTime += data[i].workHours;
         let dateDt = parseInt(data[i].date.split('-')[2]);
         let dateDoc = parseInt(docs[i + offset].getAttribute("data-date").split('-')[2]);
+        if(docs[i + offset].getAttribute("data-week") == '6')
+        {
+            docs[i + offset].getElementsByClassName("time")[0].innerHTML += ('<br>'+setColor(weekTime.toFixed(2), "#0000ff"));
+            weekTime = 0;
+        }
         if(dateDt != dateDoc)
         {
             offset += dateDt - dateDoc;
@@ -138,11 +143,6 @@ function showWeekTime() {
         if(docs[i + offset] == null)
         {
             return;
-        }
-        if(docs[i + offset].getAttribute("data-week") == '6')
-        {
-            docs[i + offset].getElementsByClassName("time")[0].innerHTML += ('<br>'+setColor(weekTime.toFixed(2), "#0000ff"));
-            weekTime = 0;
         }
     }
 }
