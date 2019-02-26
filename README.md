@@ -2,6 +2,11 @@
 
 本插件仅限于http://oa.info使用
 
+- 使用方法：
+  - 下载xbrowser.crx，拖动到chrome浏览器窗口里面
+  - 参考https://www.cnblogs.com/javalittleman/p/4070772.html ，启用第三方插件
+  - 刷新浏览器，大功告成！
+
 - 特性
   - 在 ”我的考勤“ 右侧显示本月工作时长和本周工作时长
   - 在控制台显示每周工作时长
